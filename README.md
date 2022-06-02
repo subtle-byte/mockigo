@@ -41,7 +41,7 @@ For example you can create `mockigo.yaml`
 root-dir: pkg
 mocks-dir: pkg/mocks
 walk:
-  - "!." # exlude everything in `pkg`
+  - "!." # exclude everything in `pkg`
   - "service" # includes dir `pkg/service` back
   - "server@SomeInterface1,SomeInterface2" # includes interfaces SomeInterface1 and SomeInterface2 in `pkg/server` back
 ```
