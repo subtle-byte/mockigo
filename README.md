@@ -3,7 +3,7 @@ mockigo
 =======
 [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square)](https://pkg.go.dev/github.com/subtle-byte/mockigo?tab=overview)
 
-mockigo provides the ability to easily generate mocks for golang interfaces.
+`mockigo` provides the ability to easily generate mocks for golang interfaces.
 
 Table of Contents
 -----------------
@@ -95,7 +95,7 @@ func TestMocks(t *testing.T) {
 }
 ```
 
-`mathc.Eq` and `match.Any` check the arguments of mock method when it is called. So everything in this testing code is typechecked in compile time using Go 1.18 generics.
+`mathc.Eq` and `match.Any` check the arguments of mock method when it is called. Everything in this testing code is typechecked in compile time using Go 1.18 generics.
 
 More powerfull usage (also everything is typechecked in compile time):
 
@@ -131,3 +131,5 @@ func TestMocks(t *testing.T) {
 
 Comparison with `mockery` and `gomock`
 ------------
+
+TODO
