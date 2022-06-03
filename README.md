@@ -5,6 +5,8 @@ mockigo
 
 `mockigo` provides the ability to easily generate mocks for golang interfaces.
 
+Caveat: `mockigo` uses Go 1.18 generics in the generated mocks.
+
 Table of Contents
 -----------------
 
