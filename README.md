@@ -132,4 +132,27 @@ func TestMocks(t *testing.T) {
 Comparison with `mockery` and `gomock`
 ------------
 
-TODO
+Neither `mockery` nor `gomock` do not generate type-safe mocks.
+
+For example with `gomock` the following code (which generated using `FooBar` interface defined above) is valid during compilation, but it will fail in runtime:
+
+```go
+fooBar.EXPECT().Foo("not int").Return([]byte("not string"), "not error", "not allowed third return")
+```
+
+Also with `mockery` the following code is valid during compilation, but it will fail in runtime:
+
+```go
+fooBar.EXPECT().Foo("not int").Call.Return(func(notInt string) {
+	// returns nothing instead of 2 expected returns
+})
+```
+
+Another benefit of `mockigo` - it is faster. For example lets generate mocks for ![CoreDNS](https://github.com/coredns/coredns) project using commands `/usr/bin/time --verbose mockigo --root-dir . --mocks-dir mocks` and `/usr/bin/time --verbose mockery --all --dir . --output mocks2 --keeptree --with-expecter`. The results:
+
+| |Time of generation|Max RAM usage|
+|---|---|---|
+|mockery|34.29 sec|483 MB|
+|mockigo|0.76|105 MB|
+
+Also `mockigo` allows to recursively walk the dirs with flexible rules.
