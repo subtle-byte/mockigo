@@ -99,7 +99,7 @@ func TestMocks(t *testing.T) {
 
 `mathc.Eq` and `match.Any` check the arguments of mock method when it is called. Everything in this testing code is typechecked in compile time using Go 1.18 generics.
 
-More powerfull usage (also everything is typechecked in compile time):
+More powerful usage (also everything is typechecked in compile time):
 
 ```go
 package service
