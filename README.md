@@ -20,7 +20,7 @@ Installation
 You can use the `go install`:
 
 ```
-go install github.com/subtle-byte/mockigo/cmd@latest
+go install github.com/subtle-byte/mockigo/cmd/mockigo@latest
 ```
 
 Usage in command line
