@@ -49,7 +49,7 @@ walk:
 ```
 and run `mockigo`.
 
-Alternativly you can do the same without `mockogo.yaml` running command `mockigo --root-dir=pkg --mocks-dir=pkg/mocks --walk="!.;service;server@SomeInterface1,SomeInterface2`.
+Alternatively you can do the same without `mockogo.yaml` running command `mockigo --root-dir=pkg --mocks-dir=pkg/mocks --walk="!.;service;server@SomeInterface1,SomeInterface2`.
 
 
 Generated mocks usage
