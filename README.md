@@ -155,6 +155,6 @@ Another benefit of `mockigo` - it is faster. For example lets generate mocks for
 | |Time of generation|Max RAM usage|
 |---|---|---|
 |mockery|34.29 sec|483 MB|
-|mockigo|0.76|105 MB|
+|mockigo|0.76 sec|105 MB|
 
 Also `mockigo` allows to recursively walk the dirs with flexible rules.
