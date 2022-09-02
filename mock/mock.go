@@ -65,7 +65,7 @@ func (mock *Mock) callerInfo(skip int) string {
 
 func (mock *Mock) ExpectCall(method string, args ...Matcher) *Call {
 	mock.T.Helper()
-	call := newCall(mock, method, mock.callerInfo(2), args...)
+	call := newCall(mock.T, method, mock.callerInfo(2), args...)
 	mock.mu.Lock()
 	defer mock.mu.Unlock()
 	mock.expectedCalls.Add(call)
@@ -83,7 +83,7 @@ func (r Rets) Len() int {
 
 func (r Rets) Get(i int) interface{} {
 	if i >= r.Len() {
-		r.call.mock.T.Fatalf("Call %v does not have return value at index %v", r.call.origin, i)
+		r.call.t.Fatalf("Call %v does not have return value at index %v", r.call.origin, i)
 	}
 	return r.rets[i]
 }
@@ -95,7 +95,7 @@ func (r Rets) Error(i int) error {
 	}
 	e, ok := ret.(error)
 	if !ok {
-		r.call.mock.T.Fatalf("Call %v does not have return value of the error type at index %v", r.call.origin, i)
+		r.call.t.Fatalf("Call %v does not have return value of the error type at index %v", r.call.origin, i)
 	}
 	return e
 }

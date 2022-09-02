@@ -6,7 +6,7 @@ import (
 )
 
 type Call struct {
-	mock               *Mock
+	t                  Testing
 	method             string
 	argsMatchers       []Matcher
 	prevCalls          []prevCall
@@ -29,10 +29,10 @@ type prevCall struct {
 
 const infCalls = 1e8 // close enough to infinity
 
-func newCall(mock *Mock, method string, origin string, argsMatchers ...Matcher) *Call {
-	mock.T.Helper()
+func newCall(t Testing, method string, origin string, argsMatchers ...Matcher) *Call {
+	t.Helper()
 	return &Call{
-		mock:           mock,
+		t:              t,
 		method:         method,
 		argsMatchers:   argsMatchers,
 		prevCalls:      nil,
@@ -74,7 +74,7 @@ func (c *Call) exhausted() bool {
 }
 
 func (c *Call) After(minTimes, maxTimes int, previousCall PrevCall) *Call {
-	c.mock.T.Helper()
+	c.t.Helper()
 	if maxTimes == -1 {
 		maxTimes = infCalls
 	}
@@ -123,7 +123,7 @@ func (c *Call) matches(args []interface{}) error {
 }
 
 func (c *Call) Return(rets ...interface{}) *Call {
-	c.mock.T.Helper()
+	c.t.Helper()
 	c.action = func([]interface{}) []interface{} {
 		return rets
 	}
@@ -133,11 +133,11 @@ func (c *Call) Return(rets ...interface{}) *Call {
 func (c *Call) RunReturn(f interface{}) *Call {
 	v := reflect.ValueOf(f)
 	if ft := v.Type(); len(c.argsMatchers) != ft.NumIn() {
-		c.mock.T.Fatalf("Wrong number of arguments in RunReturn func for call %v: got %d, want %d",
+		c.t.Fatalf("Wrong number of arguments in RunReturn func for call %v: got %d, want %d",
 			c.origin, len(c.argsMatchers), ft.NumIn())
 	}
 	c.action = func(args []interface{}) []interface{} {
-		c.mock.T.Helper()
+		c.t.Helper()
 		vArgs := make([]reflect.Value, len(args))
 		for i := 0; i < len(args); i++ {
 			vArgs[i] = reflect.ValueOf(args[i])
