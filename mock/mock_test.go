@@ -8,6 +8,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func newMock(t *testing.T) *Mock {
+	t.Helper()
+	m := NewMock(t)
+	caller := m.getCaller
+	m.getCaller = func(skip int) (pc uintptr, file string, line int, ok bool) {
+		return caller(skip) // No need +1 because we want to use Mock outside some mock object
+	}
+	return m
+}
+
 func Example_simple() {
 	runWithT(func(t *t) {
 		m := newMockWithT(t)
@@ -21,7 +31,7 @@ func Example_simple() {
 }
 
 func TestMock_withReturn(t *testing.T) {
-	m := NewMock(t)
+	m := newMock(t)
 	m.ExpectCall("Foo", Eq("hello")).Return(43)
 	ret := m.Called("Foo", "hello")
 	ret0 := ret.Get(0).(int)
@@ -29,7 +39,7 @@ func TestMock_withReturn(t *testing.T) {
 }
 
 func TestMock_withRunReturn(t *testing.T) {
-	m := NewMock(t)
+	m := newMock(t)
 	m.ExpectCall("Foo", Eq("hello")).RunReturn(func(s string) int {
 		return 43
 	})
@@ -83,13 +93,13 @@ func Example_withInOrder() {
 }
 
 func TestMock_withMatchers(t *testing.T) {
-	m := NewMock(t)
+	m := newMock(t)
 	m.ExpectCall("Foo", Any(), Eq("hello"), Not(Eq(0)))
 	m.Called("Foo", 100, "hello", 1)
 }
 
 func TestMock_withMany(t *testing.T) {
-	m := NewMock(t)
+	m := newMock(t)
 	InOrder(1, 1,
 		m.ExpectCall("Foo", Any(), Eq("hello")).Return(45),
 		m.ExpectCall("Bar", Any()).RunReturn(func(n int) string {
@@ -139,7 +149,7 @@ func Example_errReturn() {
 }
 
 func Test_unknownFile(t *testing.T) {
-	m := NewMock(t)
+	m := newMock(t)
 	m.getCaller = func(skip int) (pc uintptr, file string, line int, ok bool) {
 		return 0, "", 0, false
 	}
