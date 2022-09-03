@@ -17,22 +17,22 @@ import (
 func TestSimpleInterface(t *testing.T) {
 	simple := mocks.NewSimpleInterface(t)
 
-	mock.InOrder(1, 1,
+	mock.InOrder(
 		simple.EXPECT().
 			Bar(match.MatchedBy(func(i int) bool {
 				return i > 5
 			})).
 			RunReturn(func(i int) int {
 				return i - 5
-			}),
+			}).
+			Times(1, 1),
 		simple.EXPECT().
 			Bar(match.Any[int]()).
 			Return(0),
 	)
-	r1 := simple.Bar(8)
-	r2 := simple.Bar(2)
-	require.Equal(t, 3, r1)
-	require.Equal(t, 0, r2)
+	require.Equal(t, 3, simple.Bar(8))
+	require.Equal(t, 0, simple.Bar(8))
+	require.Equal(t, 0, simple.Bar(2))
 }
 
 func TestSomeInterface(t *testing.T) {
@@ -52,26 +52,22 @@ func TestSomeInterface(t *testing.T) {
 
 func TestFooBar(t *testing.T) {
 	fb := mocks.NewFooBar(t)
-	mock.InOrder(1, -1,
+	mock.InOrder(
 		fb.EXPECT().Foo(match.Eq(7)).Return(8),
 		fb.EXPECT().Bar(match.Eq(time.Second)),
 	)
-	r := fb.Foo(7)
-	assert.Equal(t, 8, r)
+	assert.Equal(t, 8, fb.Foo(7))
 	fb.Bar(time.Second)
 }
 
 func TestBarFoo(t *testing.T) {
 	m := mocks.NewBarFoo(t)
-	mock.InOrder(1, -1,
+	mock.InOrder(
 		m.EXPECT().Foo(match.Any[int](), match.Eq("hello")).Return(45),
 		m.EXPECT().Bar(match.Any[int]()).RunReturn(func(n int) string {
 			return strconv.Itoa(n)
 		}),
 	)
-	fooRet := m.Foo(100, "hello") // == 45
-	barRet := m.Bar(200)          // == "200"
-
-	assert.Equal(t, 45, fooRet)
-	assert.Equal(t, "200", barRet)
+	assert.Equal(t, 45, m.Foo(100, "hello"))
+	assert.Equal(t, "200", m.Bar(200))
 }

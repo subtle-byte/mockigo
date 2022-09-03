@@ -9,22 +9,24 @@ type Call struct {
 	t                  Testing
 	method             string
 	argsMatchers       []Matcher
-	prevCalls          []prevCall
+	prevCalls          []*Call
+	nextCalled         []*Call
 	minCalls, maxCalls int
 	actualCallsNum     int
 	action             func([]interface{}) []interface{}
 	origin             string
 }
 
-type PrevCall interface {
-	After(minTimes, maxTimes int, previousCall PrevCall) *Call
-	CallsNum() int
-	Origin() string
+// CallHolder is implemented by Call and also by any types that embed Call (e.g. by generated typed Call)
+type CallHolder interface {
+	GetCall() *Call
 }
 
-type prevCall struct {
-	minCalls, maxCalls int
-	call               PrevCall
+var _ CallHolder = (*Call)(nil)
+
+// GetCall implements CallHolder interface, just returns the receiver c
+func (c *Call) GetCall() *Call {
+	return c
 }
 
 const infCalls = 1e8 // close enough to infinity
@@ -44,6 +46,8 @@ func newCall(t Testing, method string, origin string, argsMatchers ...Matcher) *
 	}
 }
 
+// Times set how many times the call should be called.
+// Use -1 for max to identify infinity.
 func (c *Call) Times(min, max int) *Call {
 	if max == -1 {
 		max = infCalls
@@ -52,12 +56,8 @@ func (c *Call) Times(min, max int) *Call {
 	return c
 }
 
-func (c *Call) CallsNum() int {
+func (c *Call) CalledTimes() int {
 	return c.actualCallsNum
-}
-
-func (c *Call) Origin() string {
-	return c.origin
 }
 
 // Returns true if the minimum number of calls have been made.
@@ -65,27 +65,29 @@ func (c *Call) satisfied() bool {
 	return c.actualCallsNum >= c.minCalls
 }
 
-// Returns true if the maximum number of calls have been made.
-func (c *Call) exhausted() bool {
-	return c.actualCallsNum >= c.maxCalls
+func (c *Call) callingNext(next *Call) {
+	c.nextCalled = append(c.nextCalled, next)
 }
 
-func (c *Call) After(minTimes, maxTimes int, previousCall PrevCall) *Call {
-	c.t.Helper()
-	if maxTimes == -1 {
-		maxTimes = infCalls
+func (c *Call) call(args []interface{}) []interface{} {
+	c.actualCallsNum++
+	for _, prevCall := range c.prevCalls {
+		prevCall.callingNext(c)
 	}
-	c.prevCalls = append(c.prevCalls, prevCall{
-		minCalls: minTimes,
-		maxCalls: maxTimes,
-		call:     previousCall,
-	})
+	return c.action(args)
+}
+
+// After sets that the call c can be called only after the prevCall is called its min times.
+//
+// After the prevCall is called the call c cannot be called.
+func (c *Call) After(prevCall CallHolder) *Call {
+	c.prevCalls = append(c.prevCalls, prevCall.GetCall())
 	return c
 }
 
-func InOrder(minTimes, maxTimes int, calls ...PrevCall) {
+func InOrder(calls ...CallHolder) {
 	for i := 1; i < len(calls); i++ {
-		calls[i].After(minTimes, maxTimes, calls[i-1])
+		calls[i].GetCall().After(calls[i-1])
 	}
 }
 
@@ -99,20 +101,24 @@ func (c *Call) matches(args []interface{}) error {
 	for i, matcher := range c.argsMatchers {
 		if !matcher(args[i]) {
 			return fmt.Errorf(
-				"expected call %s doesn't match the argument %#v at index %d",
-				c.origin, args[i], i,
+				"expected call %s doesn't match %v argument %#v",
+				c.origin, ordinal(i+1), args[i],
 			)
 		}
 	}
 
 	for _, prevCall := range c.prevCalls {
-		if !(prevCall.minCalls <= prevCall.call.CallsNum() && prevCall.call.CallsNum() <= prevCall.maxCalls) {
+		if !prevCall.satisfied() {
 			return fmt.Errorf("expected call %s should be called after call %v",
-				c.origin, prevCall.call.Origin())
+				c.origin, prevCall.origin)
 		}
 	}
 
-	if c.exhausted() {
+	if len(c.nextCalled) != 0 {
+		return fmt.Errorf("some expected calls planned to be after expected call %s have already been called", c.origin)
+	}
+
+	if c.actualCallsNum >= c.maxCalls {
 		return fmt.Errorf("expected call %s has already been called the max number of times", c.origin)
 	}
 
@@ -120,7 +126,6 @@ func (c *Call) matches(args []interface{}) error {
 }
 
 func (c *Call) Return(rets ...interface{}) *Call {
-	c.t.Helper()
 	c.action = func([]interface{}) []interface{} {
 		return rets
 	}

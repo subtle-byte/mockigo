@@ -18,11 +18,10 @@ func newCallSet() *callSet {
 	return &callSet{make(map[callSetKey][]*Call)}
 }
 
-// Add adds a new expected call.
+// Add adds a new expected call
 func (cs callSet) Add(call *Call) {
 	key := callSetKey{call.method}
-	m := cs.calls
-	m[key] = append(m[key], call)
+	cs.calls[key] = append(cs.calls[key], call)
 }
 
 func (cs callSet) FindMatch(method string, args []interface{}) (*Call, error) {
@@ -43,6 +42,7 @@ func (cs callSet) FindMatch(method string, args []interface{}) (*Call, error) {
 	return nil, errors.New(callsErrors.String())
 }
 
+// Unsatisfied returns the Calls that was not called but must be called
 func (cs callSet) Unsatisfied() []*Call {
 	unsatisfied := []*Call(nil)
 	for _, methodCalls := range cs.calls {

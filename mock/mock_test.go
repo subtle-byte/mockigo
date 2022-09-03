@@ -27,7 +27,7 @@ func Example_simple() {
 	})
 	//Output:
 	// runWithT:4: Unexpected call of method "Foo" because:
-	// expected call runWithT:2 doesn't match the argument "bye" at index 0
+	// expected call runWithT:2 doesn't match 1st argument "bye"
 }
 
 func TestMock_withReturn(t *testing.T) {
@@ -52,8 +52,9 @@ func Example_withTimes() {
 	runWithT(func(t *t) {
 		m := newMockWithT(t)
 		m.ExpectCall("BarBar").Times(0, 2)
-		m.ExpectCall("BarBar2").Times(0, 2)
+		barbar2 := m.ExpectCall("BarBar2").Times(0, 2)
 		m.Called("BarBar2")
+		require.Equal(t, 1, barbar2.CalledTimes())
 		m.ExpectCall("Bar").Times(1, -1)
 		m.Called("Bar")
 		m.Called("Bar")
@@ -62,15 +63,15 @@ func Example_withTimes() {
 		m.Called("Foo", "hello")
 	})
 	//Output:
-	// runWithT:10: Unexpected call of method "Foo" because:
-	// expected call runWithT:9 has already been called the max number of times
+	// runWithT:11: Unexpected call of method "Foo" because:
+	// expected call runWithT:10 has already been called the max number of times
 }
 
 func Example_withAfter() {
 	runWithT(func(t *t) {
 		m := newMockWithT(t)
 		fooCall := m.ExpectCall("Foo")
-		m.ExpectCall("Bar").After(1, -1, fooCall)
+		m.ExpectCall("Bar").After(fooCall)
 		m.Called("Bar")
 	})
 	//Output:
@@ -78,10 +79,24 @@ func Example_withAfter() {
 	// expected call runWithT:3 should be called after call runWithT:2
 }
 
+func Example_withAfterCallingPrev() {
+	runWithT(func(t *t) {
+		m := newMockWithT(t)
+		fooCall := m.ExpectCall("Foo")
+		m.ExpectCall("Bar").After(fooCall)
+		m.Called("Foo")
+		m.Called("Bar")
+		m.Called("Foo")
+	})
+	//Output:
+	// runWithT:6: Unexpected call of method "Foo" because:
+	// some expected calls planned to be after expected call runWithT:2 have already been called
+}
+
 func Example_withInOrder() {
 	runWithT(func(t *t) {
 		m := newMockWithT(t)
-		InOrder(1, -1,
+		InOrder(
 			m.ExpectCall("Foo"),
 			m.ExpectCall("Bar"),
 		)
@@ -100,7 +115,7 @@ func TestMock_withMatchers(t *testing.T) {
 
 func TestMock_withMany(t *testing.T) {
 	m := newMock(t)
-	InOrder(1, 1,
+	InOrder(
 		m.ExpectCall("Foo", Any(), Eq("hello")).Return(45),
 		m.ExpectCall("Bar", Any()).RunReturn(func(n int) string {
 			return strconv.Itoa(n)
@@ -130,7 +145,7 @@ func Example_noReturn() {
 		rets.Get(1)
 	})
 	//Output:
-	// runWithT:4: Call runWithT:2 does not have return value at index 1
+	// runWithT:4: Call runWithT:2 does not have 2nd return value
 }
 
 func Example_errReturn() {
@@ -145,7 +160,7 @@ func Example_errReturn() {
 		rets.Error(2)
 	})
 	//Output:
-	// runWithT:8: Call runWithT:2 does not have return value of the error type at index 2
+	// runWithT:8: Call runWithT:2 does not have 3rd return value of the error type
 }
 
 func Test_unknownFile(t *testing.T) {

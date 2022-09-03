@@ -65,36 +65,6 @@ func (mock *Mock) ExpectCall(method string, args ...Matcher) *Call {
 	return call
 }
 
-type Rets struct {
-	rets []interface{}
-	call *Call
-}
-
-func (r Rets) Len() int {
-	return len(r.rets)
-}
-
-func (r Rets) Get(i int) interface{} {
-	r.call.t.Helper()
-	if i >= r.Len() {
-		r.call.t.Fatalf("Call %v does not have return value at index %v", r.call.origin, i)
-	}
-	return r.rets[i]
-}
-
-func (r Rets) Error(i int) error {
-	r.call.t.Helper()
-	ret := r.Get(i)
-	if ret == nil {
-		return nil
-	}
-	e, ok := ret.(error)
-	if !ok {
-		r.call.t.Fatalf("Call %v does not have return value of the error type at index %v", r.call.origin, i)
-	}
-	return e
-}
-
 func (mock *Mock) Called(method string, args ...interface{}) Rets {
 	mock.T.Helper()
 
@@ -109,11 +79,10 @@ func (mock *Mock) Called(method string, args ...interface{}) Rets {
 			mock.T.Fatalf("Unexpected call of method %q because:%s", method, err)
 		}
 
-		expected.actualCallsNum++
 		call = expected
 	}()
 
-	var rets = call.action(args)
+	var rets = call.call(args)
 	return Rets{
 		rets: rets,
 		call: call,
