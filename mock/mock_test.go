@@ -41,18 +41,19 @@ func TestMock_withRunReturn(t *testing.T) {
 func Example_withTimes() {
 	runWithT(func(t *t) {
 		m := newMockWithT(t)
-		m.ExpectCall("BarBar").Times(0, 1)
+		m.ExpectCall("BarBar").Times(0, 2)
+		m.ExpectCall("BarBar2").Times(0, 2)
+		m.Called("BarBar2")
 		m.ExpectCall("Bar").Times(1, -1)
 		m.Called("Bar")
 		m.Called("Bar")
 		m.Called("Bar")
 		m.ExpectCall("Foo", Eq("hello")).Times(1, -100)
 		m.Called("Foo", "hello")
-		m.Called("Foo", "hello")
 	})
 	//Output:
-	// runWithT:9: Unexpected call of method "Foo" because:
-	// expected call runWithT:7 has already been called the max number of times
+	// runWithT:10: Unexpected call of method "Foo" because:
+	// expected call runWithT:9 has already been called the max number of times
 }
 
 func Example_withAfter() {

@@ -48,9 +48,6 @@ func (c *Call) Times(min, max int) *Call {
 	if max == -1 {
 		max = infCalls
 	}
-	if min > max {
-		max = min
-	}
 	c.minCalls, c.maxCalls = min, max
 	return c
 }
