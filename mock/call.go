@@ -131,6 +131,7 @@ func (c *Call) Return(rets ...interface{}) *Call {
 }
 
 func (c *Call) RunReturn(f interface{}) *Call {
+	c.t.Helper()
 	v := reflect.ValueOf(f)
 	if ft := v.Type(); len(c.argsMatchers) != ft.NumIn() {
 		c.t.Fatalf("Wrong number of arguments in RunReturn func for call %v: got %d, want %d",

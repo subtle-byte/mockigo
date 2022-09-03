@@ -3,7 +3,6 @@ package mock
 import (
 	"fmt"
 	"runtime"
-	"strings"
 	"sync"
 )
 
@@ -27,6 +26,7 @@ func NewMock(t Testing) *Mock {
 	mock := &Mock{
 		T:             t,
 		expectedCalls: newCallSet(),
+		getCaller:     runtime.Caller,
 	}
 	t.Cleanup(func() {
 		mock.T.Helper()
@@ -49,14 +49,7 @@ func (mock *Mock) finish() {
 }
 
 func (mock *Mock) callerInfo(skip int) string {
-	getCaller := mock.getCaller
-	if getCaller == nil {
-		getCaller = runtime.Caller
-	}
-	_, file, line, ok := getCaller(skip + 1)
-	if ok && strings.HasSuffix(file, "libexec/src/testing/testing.go") {
-		_, file, line, ok = getCaller(skip)
-	}
+	_, file, line, ok := mock.getCaller(skip + 1)
 	if ok {
 		return fmt.Sprintf("%s:%d", file, line)
 	}
@@ -82,6 +75,7 @@ func (r Rets) Len() int {
 }
 
 func (r Rets) Get(i int) interface{} {
+	r.call.t.Helper()
 	if i >= r.Len() {
 		r.call.t.Fatalf("Call %v does not have return value at index %v", r.call.origin, i)
 	}
@@ -89,6 +83,7 @@ func (r Rets) Get(i int) interface{} {
 }
 
 func (r Rets) Error(i int) error {
+	r.call.t.Helper()
 	ret := r.Get(i)
 	if ret == nil {
 		return nil
