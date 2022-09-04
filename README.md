@@ -116,7 +116,7 @@ import (
 
 func TestMocks(t *testing.T) {
 	fooBar := service_mocks.NewFooBar(t)
-	mock.InOrder(1, 1, // Foo must be called after exactly one call of Bar
+	mock.InOrder( // Foo can be called only after at least one call of Bar
 		fooBar.EXPECT().Bar(),
 		fooBar.EXPECT().Foo(match.MatchedBy(func(n int) bool {
 			return n > 0
