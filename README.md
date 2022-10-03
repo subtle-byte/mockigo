@@ -134,7 +134,7 @@ func TestMocks(t *testing.T) {
 Comparison with `mockery` and `gomock`
 ------------
 
-Neither `mockery` nor `gomock` do not generate type-safe mocks.
+Neither `mockery` nor `gomock` generate type-safe mocks.
 
 For example with `gomock` the following code (which generated using `FooBar` interface defined above) is valid during compilation, but it will fail in runtime:
 
