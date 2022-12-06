@@ -4,7 +4,7 @@ package fixtures
 
 import match "github.com/subtle-byte/mockigo/match"
 import mock "github.com/subtle-byte/mockigo/mock"
-import some_interface "github.com/subtle-byte/mockigo/internal/fixtures/our/some_interface"
+import some_interface "github.com/subtle-byte/mockigo/internal/fixtures/our/some-interface"
 
 var _ = match.Any[int]
 

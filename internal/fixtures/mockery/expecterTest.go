@@ -1,4 +1,4 @@
-package test
+package mockery
 
 type ExpecterTest interface {
 	NoArg() string

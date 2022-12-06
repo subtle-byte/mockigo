@@ -1,4 +1,4 @@
-package test
+package mockery
 
 type Fooer interface {
 	Foo(f func(x string) string) error
