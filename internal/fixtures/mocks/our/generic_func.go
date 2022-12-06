@@ -4,20 +4,20 @@ package fixtures
 
 import match "github.com/subtle-byte/mockigo/match"
 import mock "github.com/subtle-byte/mockigo/mock"
-import some_interface "github.com/subtle-byte/mockigo/internal/fixtures/our/some-interface"
+import someinterface "github.com/subtle-byte/mockigo/internal/fixtures/our/some-interface"
 
 var _ = match.Any[int]
 
-type GenericFunc[Y some_interface.SomeInterface] struct {
+type GenericFunc[Y someinterface.SomeInterface] struct {
 	mock *mock.Mock
 }
 
-func NewGenericFunc[Y some_interface.SomeInterface](t mock.Testing) *GenericFunc[Y] {
+func NewGenericFunc[Y someinterface.SomeInterface](t mock.Testing) *GenericFunc[Y] {
 	t.Helper()
 	return &GenericFunc[Y]{mock: mock.NewMock(t)}
 }
 
-type _GenericFunc_Expecter[Y some_interface.SomeInterface] struct {
+type _GenericFunc_Expecter[Y someinterface.SomeInterface] struct {
 	mock *mock.Mock
 }
 
@@ -25,7 +25,7 @@ func (_mock *GenericFunc[Y]) EXPECT() _GenericFunc_Expecter[Y] {
 	 return _GenericFunc_Expecter[Y]{mock: _mock.mock}
 }
 
-type _GenericFunc_Execute_Call[Y some_interface.SomeInterface] struct {
+type _GenericFunc_Execute_Call[Y someinterface.SomeInterface] struct {
 	*mock.Call
 }
 

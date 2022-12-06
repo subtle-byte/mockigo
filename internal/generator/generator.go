@@ -138,7 +138,9 @@ func generateImports(w *writer, methods []*types.Func, typeParams *types.TypePar
 	walkingPkgQualifier := func(pkg *types.Package) string {
 		maxConsecutiveUnderscores = string_util.CountMaxConsecutiveUnderscores(pkg.Path(), maxConsecutiveUnderscores)
 		splittedPath := strings.Split(pkg.Path(), "/")
-		splittedPath[len(splittedPath)-1] = pkg.Name()
+		for i := range splittedPath {
+			splittedPath[i] = strings.ReplaceAll(splittedPath[i], "-", "")
+		}
 		trie.LoadPath(splittedPath, pkg.Path())
 		return ""
 	}

@@ -2,6 +2,7 @@ default:
 	echo "Target not selected"
 
 gen-fixtures:
+	rm -rf internal/fixtures/mocks
 	cd internal/fixtures && go run ../../cmd/mockigo
 
 test:
