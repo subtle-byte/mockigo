@@ -138,6 +138,7 @@ func generateImports(w *writer, methods []*types.Func, typeParams *types.TypePar
 	walkingPkgQualifier := func(pkg *types.Package) string {
 		maxConsecutiveUnderscores = string_util.CountMaxConsecutiveUnderscores(pkg.Path(), maxConsecutiveUnderscores)
 		splittedPath := strings.Split(pkg.Path(), "/")
+		splittedPath[len(splittedPath)-1] = pkg.Name()
 		trie.LoadPath(splittedPath, pkg.Path())
 		return ""
 	}
@@ -325,7 +326,7 @@ func generateForMethod(w *writer, interfaceName, typeParamsOnInterface, typePara
 
 func writeToFile(buf []byte, filePath string) error {
 	mockDir := filepath.Dir(filePath)
-	err := os.MkdirAll(mockDir, 0777)
+	err := os.MkdirAll(mockDir, 0o777)
 	if err != nil {
 		return fmt.Errorf("create dirs to mock (mock dir = %s): %w", mockDir, err)
 	}

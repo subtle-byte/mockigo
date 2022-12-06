@@ -1,4 +1,4 @@
-package test
+package mockery
 
 import (
 	"github.com/subtle-byte/mockigo/internal/fixtures/mockery/http"

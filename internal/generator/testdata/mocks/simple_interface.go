@@ -2,9 +2,9 @@
 
 package data
 
+import data "github.com/subtle-byte/mockigo/internal/generator/testdata"
 import match "github.com/subtle-byte/mockigo/match"
 import mock "github.com/subtle-byte/mockigo/mock"
-import testdata "github.com/subtle-byte/mockigo/internal/generator/testdata"
 import time "time"
 
 var _ = match.Any[int]
@@ -30,12 +30,12 @@ type _SimpleInterface_Foo_Call struct {
 	*mock.Call
 }
 
-func (_mock *SimpleInterface) Foo(_a0 time.Time) (testdata.Nilable, error) {
+func (_mock *SimpleInterface) Foo(_a0 time.Time) (data.Nilable, error) {
 	_mock.mock.T.Helper()
 	_results := _mock.mock.Called("Foo", _a0)
-	var _r0 testdata.Nilable
+	var _r0 data.Nilable
 	if _got := _results.Get(0); _got != nil {
-		_r0 = _got.(testdata.Nilable)
+		_r0 = _got.(data.Nilable)
 	}
 	_r1 := _results.Error(1)
 	return _r0, _r1
@@ -45,12 +45,12 @@ func (_expecter _SimpleInterface_Expecter) Foo(_a0 match.Arg[time.Time]) _Simple
 	return _SimpleInterface_Foo_Call{Call: _expecter.mock.ExpectCall("Foo", _a0.Arg)}
 }
 
-func (_call _SimpleInterface_Foo_Call) Return(_r0 testdata.Nilable, _r1 error) _SimpleInterface_Foo_Call {
+func (_call _SimpleInterface_Foo_Call) Return(_r0 data.Nilable, _r1 error) _SimpleInterface_Foo_Call {
 	_call.Call.Return(_r0, _r1)
 	return _call
 }
 
-func (_call _SimpleInterface_Foo_Call) RunReturn(f func(time.Time) (testdata.Nilable, error)) _SimpleInterface_Foo_Call {
+func (_call _SimpleInterface_Foo_Call) RunReturn(f func(time.Time) (data.Nilable, error)) _SimpleInterface_Foo_Call {
 	_call.Call.RunReturn(f)
 	return _call
 }

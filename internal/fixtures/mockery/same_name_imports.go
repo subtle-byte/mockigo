@@ -1,4 +1,4 @@
-package test
+package mockery
 
 import (
 	"net/http"

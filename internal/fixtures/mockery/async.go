@@ -1,4 +1,4 @@
-package test
+package mockery
 
 type AsyncProducer interface {
 	Input() chan<- bool
