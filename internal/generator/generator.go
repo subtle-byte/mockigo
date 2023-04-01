@@ -75,7 +75,7 @@ func generateForPackage(pkg *types.Package, mockDir string, interfaces Interface
 		}
 		obj := pkg.Scope().Lookup(ident)
 		if !obj.Exported() {
-			continue
+			ident = strings.ToUpper(ident[:1]) + ident[1:]
 		}
 		typeNameObj, ok := obj.(*types.TypeName)
 		if !ok {
