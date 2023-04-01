@@ -8,16 +8,16 @@ import someinterface "github.com/subtle-byte/mockigo/internal/fixtures/our/some-
 
 var _ = match.Any[int]
 
-type GenericInterface[T any, B someinterface.SomeInterface, G ~int|float32] struct {
+type GenericInterface[T any, B someinterface.SomeInterface, G ~int | float32] struct {
 	mock *mock.Mock
 }
 
-func NewGenericInterface[T any, B someinterface.SomeInterface, G ~int|float32](t mock.Testing) *GenericInterface[T, B, G] {
+func NewGenericInterface[T any, B someinterface.SomeInterface, G ~int | float32](t mock.Testing) *GenericInterface[T, B, G] {
 	t.Helper()
 	return &GenericInterface[T, B, G]{mock: mock.NewMock(t)}
 }
 
-type _GenericInterface_Expecter[T any, B someinterface.SomeInterface, G ~int|float32] struct {
+type _GenericInterface_Expecter[T any, B someinterface.SomeInterface, G ~int | float32] struct {
 	mock *mock.Mock
 }
 
@@ -25,7 +25,7 @@ func (_mock *GenericInterface[T, B, G]) EXPECT() _GenericInterface_Expecter[T, B
 	 return _GenericInterface_Expecter[T, B, G]{mock: _mock.mock}
 }
 
-type _GenericInterface_SomeMethod_Call[T any, B someinterface.SomeInterface, G ~int|float32] struct {
+type _GenericInterface_SomeMethod_Call[T any, B someinterface.SomeInterface, G ~int | float32] struct {
 	*mock.Call
 }
 
