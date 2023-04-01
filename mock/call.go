@@ -3,6 +3,9 @@ package mock
 import (
 	"fmt"
 	"reflect"
+	"strings"
+
+	"github.com/k0kubun/pp/v3"
 )
 
 type Call struct {
@@ -100,9 +103,11 @@ func (c *Call) matches(args []interface{}) error {
 
 	for i, matcher := range c.argsMatchers {
 		if !matcher(args[i]) {
+			pp := pp.New()
+			pp.SetColoringEnabled(false)
 			return fmt.Errorf(
-				"expected call %s doesn't match %v argument %#v",
-				c.origin, ordinal(i+1), args[i],
+				"expected call %s doesn't match %v argument, got:\n\t%v",
+				c.origin, ordinal(i+1), strings.ReplaceAll(pp.Sprint(args[i]), "\n", "\n\t"),
 			)
 		}
 	}
