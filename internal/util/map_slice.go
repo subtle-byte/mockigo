@@ -8,10 +8,10 @@ func MapSlice[I any, R any](in []I, f func(I) R) []R {
 	return res
 }
 
-func MapSliceWithIndex[I any, R any](in []I, f func(i int, item I) R) []R {
-	res := make([]R, len(in))
-	for i, v := range in {
-		res[i] = f(i, v)
+func SliceToSet[T comparable](sl []T) map[T]struct{} {
+	res := make(map[T]struct{}, len(sl))
+	for _, v := range sl {
+		res[v] = struct{}{}
 	}
 	return res
 }

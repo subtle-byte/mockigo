@@ -27,7 +27,8 @@ func Example_simple() {
 	})
 	//Output:
 	// runWithT:4: Unexpected call of method "Foo" because:
-	// expected call runWithT:2 doesn't match 1st argument "bye"
+	// expected call runWithT:2 doesn't match 1st argument, got:
+	//	"bye"
 }
 
 func TestMock_withReturn(t *testing.T) {

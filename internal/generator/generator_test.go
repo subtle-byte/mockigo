@@ -13,12 +13,19 @@ func TestGenerator(t *testing.T) {
 		require.NoError(t, err)
 		return abs
 	}
-	interfaces := map[string]Interfaces{
-		toAbs("testdata"): {
-			IncludeInterfaces:    true,
-			InterfacesExceptions: map[string]struct{}{"Filtered": {}},
-		},
+	targets := Targets{
+		Include:    true,
+		Exceptions: map[string]struct{}{"Filtered": {}},
 	}
-	err := Generate(toAbs("testdata"), interfaces, toAbs("testdata/mocks"))
+	err := Generate(Config{
+		TargetPkgDirPath: toAbs("testdata"),
+		Targets:          targets,
+		OutFilePath:      toAbs("testdata/mocks.go"),
+		OutPkgName: func(inspectedPkgName string) string {
+			return inspectedPkgName + "_test"
+		},
+		OutPublic: true,
+		GoGenCmd:  "some command",
+	})
 	require.NoError(t, err)
 }

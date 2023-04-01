@@ -13,10 +13,10 @@ func TestAll(t *testing.T) {
 	matcherBy := MatchedBy(f)
 	not := Not(eq)
 	matchers := ArgsToMatchers([]Arg[int]{
-		{Arg: eq.Arg},
-		{Arg: any.Arg},
-		{Arg: matcherBy.Arg},
-		{Arg: not.Arg},
+		{Matcher: eq.Matcher},
+		{Matcher: any.Matcher},
+		{Matcher: matcherBy.Matcher},
+		{Matcher: not.Matcher},
 	})
 	require.Len(t, matchers, 4)
 	require.Equal(t, true, matchers[0](7))

@@ -1,6 +1,0 @@
-root-dir: .
-mocks-dir: mocks
-walk:
-  - "!."
-  - "our"
-  - "mockery"
