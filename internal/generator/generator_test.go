@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"github.com/subtle-byte/mockigo/cmd/mockigo/config"
 	"path/filepath"
 	"testing"
 
@@ -19,6 +20,6 @@ func TestGenerator(t *testing.T) {
 			InterfacesExceptions: map[string]struct{}{"Filtered": {}},
 		},
 	}
-	err := Generate(toAbs("testdata"), interfaces, toAbs("testdata/mocks"))
+	err := Generate(&config.InitializedConfig{Config: &config.Config{RootDir: "testdata", MocksDir: "testdata/mocks"}, RootDir: toAbs("testdata"), MocksDir: toAbs("testdata/mocks")}, interfaces)
 	require.NoError(t, err)
 }
