@@ -29,14 +29,14 @@ func NewTupleFormatter(tuple *types.Tuple, isVariadic bool, pkgQualifier func(pk
 }
 
 type TupleFormats struct {
-	Args                  string
-	ArgedArgs             string
-	RawParams             string
-	NamedParams           string
-	NamedArgedParams      string
-	VariadicArgs          string
-	VariadicArgsEval      string
-	VariadicArgedArgsEval string
+	Args                     string
+	ArgsMatchers             string
+	RawParams                string
+	NamedParams              string
+	NamedArgedParams         string
+	VariadicArgs             string
+	VariadicArgsEval         string
+	VariadicArgsMatchersEval string
 }
 
 func (tf TupleFormatter) Format(prefixForUnnamed string, forbiddenNames map[string]struct{}) TupleFormats {
@@ -62,11 +62,11 @@ func (tf TupleFormatter) Format(prefixForUnnamed string, forbiddenNames map[stri
 		name := names[i]
 		if i != tupleLen-1 {
 			sb.WriteString(name)
-			sb.WriteString(".Arg, ")
+			sb.WriteString(".Matcher, ")
 		} else {
 			if !tf.isVariadic {
 				sb.WriteString(name)
-				sb.WriteString(".Arg")
+				sb.WriteString(".Matcher")
 			} else {
 				sb.WriteString("match.ArgsToInterfaces(")
 				sb.WriteString(name)
@@ -75,7 +75,7 @@ func (tf TupleFormatter) Format(prefixForUnnamed string, forbiddenNames map[stri
 			break
 		}
 	}
-	f.ArgedArgs = sb.String()
+	f.ArgsMatchers = sb.String()
 
 	sb.Reset()
 	for i := 0; i < tupleLen; i++ {
@@ -133,7 +133,7 @@ func (tf TupleFormatter) Format(prefixForUnnamed string, forbiddenNames map[stri
 		for i := 0; i < tupleLen-1; i++ {
 			name := names[i]
 			sb.WriteString(name)
-			sb.WriteString(".Arg")
+			sb.WriteString(".Matcher")
 			if i != tupleLen-2 {
 				sb.WriteString(", ")
 			}
@@ -141,23 +141,16 @@ func (tf TupleFormatter) Format(prefixForUnnamed string, forbiddenNames map[stri
 		sb.WriteString("}, match.ArgsToMatchers(")
 		sb.WriteString(names[tupleLen-1])
 		sb.WriteString(")...)\n")
-		f.VariadicArgedArgsEval = sb.String()
+		f.VariadicArgsMatchersEval = sb.String()
 
 		sb.Reset()
-		sb.WriteString("\t_args := []interface{}{")
+		sb.WriteString("\t_args := []any{")
 		for i := 0; i < tupleLen-1; i++ {
 			name := names[i]
 			sb.WriteString(name)
-			if i != tupleLen-2 {
-				sb.WriteString(", ")
-			}
+			sb.WriteString(", ")
 		}
-		sb.WriteString("}\n")
-		sb.WriteString("\tfor _, _variadic := range ")
-		sb.WriteString(names[tupleLen-1])
-		sb.WriteString(" {\n")
-		sb.WriteString("\t\t_args = append(_args, interface{}(_variadic))\n")
-		sb.WriteString("\t}\n")
+		sb.WriteString("mock.SliceToAnySlice(" + names[tupleLen-1] + ")}\n")
 		f.VariadicArgsEval = sb.String()
 	}
 

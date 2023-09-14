@@ -14,9 +14,7 @@ func TestMapSlice(t *testing.T) {
 	require.Equal(t, []string{"12", "28"}, s)
 }
 
-func TestMapSliceWithIndex(t *testing.T) {
-	s := MapSliceWithIndex([]int{12, 28}, func(i, n int) string {
-		return strconv.Itoa(i) + "_" + strconv.Itoa(n)
-	})
-	require.Equal(t, []string{"0_12", "1_28"}, s)
+func TestSliceToSet(t *testing.T) {
+	set := SliceToSet([]int{12, 28})
+	require.Equal(t, map[int]struct{}{12: struct{}{}, 28: struct{}{}}, set)
 }
