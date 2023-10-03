@@ -4,7 +4,8 @@ mockigo
 
 `mockigo` provides the ability to easily generate type-safe mocks for golang interfaces.
 
-Warning: this project still is quite experimental and the backward incompatible changes are possible.
+> [!WARNING]
+> This project still is quite experimental and the backward incompatible changes are possible.
 
 Table of Contents
 -----------------
